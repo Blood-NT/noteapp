@@ -52,7 +52,7 @@ function Login() {
                 <Button type="primary" htmlType="submit" className="login-form-button">
                     Log in
                 </Button>
-                Or<Link to="/forgot-password" style={{ textDecoration: "none" }}>
+                Or<Link to="/register" style={{ textDecoration: "none" }}>
                  <a > register now!</a>
                 </Link>
             </Form.Item>

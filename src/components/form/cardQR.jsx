@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Skeleton, Switch, Space, QRCode, Flex, Button, ColorPicker,Checkbox } from 'antd';
+import { Card, Skeleton, Switch, Space, QRCode, Flex, Button, ColorPicker, Checkbox } from 'antd';
 import { SearchOutlined, DeleteFilled, HeartFilled, HeartOutlined, CopyFilled } from '@ant-design/icons';
+import { setColor } from '../../API/noteAPI';
 
-function CardQR(props) {
+const CardQR = ({ onColorChange, ...props }) => {
+
+    const [reload, setReload] = useState("");
+
     const { Meta } = Card;
 
     const [loading, setLoading] = useState(true);
@@ -11,32 +15,60 @@ function CardQR(props) {
         setLoading(!checked);
     };
     useEffect(() => {
-        setlink("https://snolan.tech/" + props.id);
-    }, [props.id]);
+        setlink("https://snolan.tech/" + props.nid);
+        
+        setCurrentColor(props.color)
+        setContrastColor(invertColor(props.color))
+    }, [props.nid,props.color]);
 
-    function getContrastColor(hexColor) {
-        // Chuyển đổi mã hex sang giá trị RGB
-        const r = parseInt(hexColor.slice(1, 3), 16);
-        const g = parseInt(hexColor.slice(3, 5), 16);
-        const b = parseInt(hexColor.slice(5, 7), 16);
+    const [currentColor,setCurrentColor] = useState(props.color); // Thay đổi màu hiện tại tại đây
+    const [contrastColor,setContrastColor] = useState(invertColor(props.color));
 
-        // Tính độ sáng trung bình
-        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
 
-        // Nếu độ sáng trung bình lớn hơn một ngưỡng, sử dụng màu đen; ngược lại, sử dụng màu trắng
-        return brightness > 128 ? "#000000" : "#ffffff";
+    const setcolortoDB= async(color) =>{    
+        onColorChange(color);
+        const res = await setColor(props.nid, color);
+        console.log("ressss", res);
+        setCurrentColor(color)
+        setContrastColor(invertColor(color))
     }
+    function invertColor(hex) {
+        // Remove the hash from the color if it's there
+        hex = hex.replace('#', '');
+      
+        // Convert the hex color to RGB
+        let r = parseInt(hex.substring(0, 2), 16);
+        let g = parseInt(hex.substring(2, 4), 16);
+        let b = parseInt(hex.substring(4, 6), 16);
+      
+        // Invert the colors
+        r = (255 - r).toString(16);
+        g = (255 - g).toString(16);
+        b = (255 - b).toString(16);
+      
+        // Ensure 2 digits by color
+        if (r.length == 1)
+          r = "0" + r;
+        if (g.length == 1)
+          g = "0" + g;
+        if (b.length == 1)
+          b = "0" + b;
+      
+        // Return the inverted color
+        return "#" + r + g + b;
+      }
 
-    const currentColor = "#517ACD"; // Thay đổi màu hiện tại tại đây
-    const contrastColor = getContrastColor(currentColor);
     const [link, setlink] = useState("https://snolan.tech/");
     const logo = "https://firebasestorage.googleapis.com/v0/b/nolanwork-128ad.appspot.com/o/image%2Fthuytrang%2Fnolan.png?alt=media&token=cb17e559-b3f9-4b34-86a7-ac1d1861df95&_gl=1*it3so1*_ga*MTE0OTU1Njk1Ny4xNjk5MjU5NTg2*_ga_CW55HF8NVT*MTY5OTI2NTc4Ni4yLjEuMTY5OTI2NTc5Mi41NC4wLjA."
     const colorPick = (color) => {
-        console.log(color);
+        console.log("check color:kkk ", color.toHexString());
+
+       
+        setcolortoDB(color.toHexString())
     }
     const onChangeCheckbox = (e) => {
         console.log(`checked = ${e.target.checked}`);
-      };
+    };
     return (
         <div>
             <div style={{ display: "flex", justifyContent: "space-evenly", alignItems: "center", textAlign: "center" }}>
@@ -54,7 +86,7 @@ function CardQR(props) {
                                 value={link}
                                 size={300}
                                 color={currentColor}
-                                icon="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
+                                // icon="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
                                 errorLevel="H"
                                 bgColor={contrastColor}
                             />
@@ -91,53 +123,54 @@ function CardQR(props) {
                         <Button type="dashed" icon={<DeleteFilled />} danger>
                             xóa
                         </Button>
-                        <ColorPicker size="large"
-                            showText 
-                            presets={[
-                                {
-                                    label: 'Recommended',
-                                    colors: [
-                                        '#000000',
-                                        '#000000E0',
-                                        '#000000A6',
-                                        '#00000073',
-                                        '#00000040',
-                                        '#00000026',
-                                        '#0000001A',
-                                        '#00000012',
-                                        '#0000000A',
-                                        '#00000005',
-                                        '#F5222D',
-                                        '#FA8C16',
-                                        '#FADB14',
-                                        '#8BBB11',
-                                        '#52C41A',
-                                        '#13A8A8',
-                                        '#1677FF',
-                                        '#2F54EB',
-                                        '#722ED1',
-                                        '#EB2F96',
-                                        '#F5222D4D',
-                                        '#FA8C164D',
-                                        '#FADB144D',
-                                        '#8BBB114D',
-                                        '#52C41A4D',
-                                        '#13A8A84D',
-                                        '#1677FF4D',
-                                        '#2F54EB4D',
-                                        '#722ED14D',
-                                        '#EB2F964D',
-                                    ],
-                                },
-                                {
-                                    label: 'Recent',
-                                    colors: [],
-                                },
-                            ]}
-                            onChangeComplete={(color) => {
-                                console.log("check color: ", color.toHexString());
-                            }} />
                     </Flex>
+                    <ColorPicker size="large"
+                        showText
+                        defaultValue={currentColor}
+                        presets={[
+                            {
+                                label: 'Recommended',
+                                colors: [
+                                    '#000000',
+                                    '#000000E0',
+                                    '#000000A6',
+                                    '#00000073',
+                                    '#00000040',
+                                    '#00000026',
+                                    '#0000001A',
+                                    '#00000012',
+                                    '#0000000A',
+                                    '#00000005',
+                                    '#F5222D',
+                                    '#FA8C16',
+                                    '#FADB14',
+                                    '#8BBB11',
+                                    '#52C41A',
+                                    '#13A8A8',
+                                    '#1677FF',
+                                    '#2F54EB',
+                                    '#722ED1',
+                                    '#EB2F96',
+                                    '#F5222D4D',
+                                    '#FA8C164D',
+                                    '#FADB144D',
+                                    '#8BBB114D',
+                                    '#52C41A4D',
+                                    '#13A8A84D',
+                                    '#1677FF4D',
+                                    '#2F54EB4D',
+                                    '#722ED14D',
+                                    '#EB2F964D',
+                                ],
+                            },
+                            {
+                                label: 'Recent',
+                                colors: [],
+                            },
+                        ]}
+                        onChangeComplete={(color) => {
+                            colorPick(color);
+                        }} />
                     <Checkbox onChange={onChangeCheckbox}>Quan trọng</Checkbox>
                 </Flex>
             </div>

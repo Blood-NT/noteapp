@@ -85,7 +85,7 @@ function Register() {
         <Button type="primary" htmlType="submit" className="login-form-button">
           Register
         </Button>
-        <a>Or</a><Link to="/forgot-password" style={{ textDecoration: "none" }}>
+        <a>Or</a><Link to="/login" style={{ textDecoration: "none" }}>
           <a > login now!</a>
         </Link>
       </Form.Item>

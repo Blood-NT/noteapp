@@ -9,6 +9,7 @@ import Register from './components/home/register';
 import Myform from './components/form/myform';
 import { Flex } from 'antd';
 import Marquee from 'react-fast-marquee';
+import Forgot from './components/home/forgot';
 function App() {
 
   const { user, setUser } = useContext(UserContext);
@@ -29,7 +30,7 @@ function App() {
  
   return (
     <>
-    <Flex >
+    <Flex style={{ paddingBottom:"10px"}}>
     
       <Marquee
       className="marquee"
@@ -38,7 +39,7 @@ function App() {
         speed="50"
         style={{ height: '50px', backgroundColor: '#eb2f964d' }}
       pauseOnHover gradient={false}>
-        Qua môn thầy trụ ^^ 
+        {/* Qua môn thầy trụ ^^  */}
       </Marquee>
 
     </Flex>
@@ -53,6 +54,9 @@ function App() {
       </Routes>
       <Routes>
         <Route path="/register" element={<Register />} />
+      </Routes>
+      <Routes>
+        <Route path="/forgot-password" element={<Forgot />} />
       </Routes>
       <Routes>
         {/* <Route exact path="/" element={user ? <Myform id="ok" /> : <Login />}/> */}
