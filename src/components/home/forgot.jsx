@@ -2,10 +2,13 @@
 
 import React from 'react';
 import { Form, Input, Button } from 'antd';
+import { forgotPassword } from '../../API/userAPI';
 
 function Forgot() {
-    const onFinish = (values) => {
+    const onFinish = async (values) => {
         console.log('Received values of form: ', values);
+        const res = await forgotPassword(values.username);
+        console.log("res");
     };
 
     return (

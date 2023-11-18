@@ -1,18 +1,41 @@
 
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { UserContext } from "../../context/userContext";
 import { Link } from "react-router-dom";
-
-function Login() {
+import { login, loginByToken } from "../../API/userAPI";
+function Login () {
     const { user, setUser } = useContext(UserContext);
 
-    const onFinish = (values) => {
-        console.log('Received values of form: ', values);
-        console.log("username: ", values.username);
-        console.log("password: ", values.password);
-        setUser(values);
+    useEffect(  () => {
+      const fetchData = async () => {
+        const res = await loginByToken();
+        console.log(res);
+        if (res.statusCode==200) {
+            const datauser={
+                uid:res.data.uid,
+                accessToken:res.data.accessToken,
+                refreshToken:res.data.token,
+            }
+            setUser(datauser);
+            localStorage.setItem("token", res.data.accessToken);
+        }
+       
+    }
+      fetchData();
+    }, []);
+    const onFinish = async (values) => {
+        const res = await login(values.username, values.password);
+        console.log("loginnnn",res);
+        if (res.statusCode===200) {
+            const datauser={
+                uid:values.username,
+                accessToken:res.accessToken,
+                refreshToken:res.refreshToken,
+            }
+            setUser(datauser);
+        }
     };
 
     return (

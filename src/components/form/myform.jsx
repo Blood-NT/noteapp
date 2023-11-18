@@ -63,7 +63,7 @@ export default function Myform({onTitleChange,...props}) {
         // console.log("content: ", content);
         // console.log(props);
     };
-
+const [save, setSave] = useState(false);
 
     const imageHandler = useCallback(() => {
         const input = document.createElement("input");
@@ -78,6 +78,7 @@ export default function Myform({onTitleChange,...props}) {
                 if (quill) {
                     const range = quill.getEditorSelection();
                     range && quill.getEditor().insertEmbed(range.index, "image", url);
+                    setSave(true);
                 }
             }
         };

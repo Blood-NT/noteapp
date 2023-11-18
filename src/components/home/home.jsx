@@ -1,6 +1,6 @@
 
 
-import { React, useEffect, useState } from 'react';
+import { React, useEffect, useState,useContext } from 'react';
 import { DownOutlined } from '@ant-design/icons';
 // import type { MenuProps } from 'antd';
 
@@ -10,12 +10,13 @@ import CardQR from '../form/cardQR';
 import { AndroidOutlined, AppleOutlined } from '@ant-design/icons';
 import { Tabs } from 'antd';
 import { createNote, getAllNote } from '../../API/noteAPI';
+import { UserContext } from '../../context/userContext';
 
 function Home() {
     const { Search } = Input;
     
     const [idnote, setIdNote] = useState();
-
+    const { user, setUser } = useContext(UserContext);
     const items = [
         {
             key: '1',
@@ -34,11 +35,9 @@ function Home() {
 
     const [data, setData] = useState([]);
     const [reloadd,setReloadd]=useState(false);
-
     useEffect(() => {
         const fetchData = async () => {
-            const res = await getAllNote("admin")
-            console.log("data",res.data.data);
+            const res = await getAllNote(user.uid);
             setData(res.data.data);
         }
         fetchData();
@@ -52,8 +51,7 @@ function Home() {
     }
     useEffect(() => {
         const fetchData = async () => {
-            const res = await getAllNote("admin");
-            console.log("data reload",res.data.data);
+            const res = await getAllNote(user.uid);
             setData(res.data.data);
         }
          fetchData();
@@ -252,7 +250,7 @@ function Home() {
     }
 
     const onSearch = (value) => {
-        createNote(value);
+        createNote(value, user.username);
         setReloadd(!reloadd);
     }
     const handleColorChange = (newColor) => {

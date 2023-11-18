@@ -3,11 +3,10 @@ import { useState } from "react";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { Link } from "react-router-dom";
+import { register } from "../../API/userAPI";
 function Register() {
-  const onFinish = (values) => {
-    console.log('Received values of form: ', values);
-    console.log("username: ", values.username);
-    console.log("password: ", values.password);
+  const onFinish = async (values) => {
+   const res = await register(values.username,  values.password,values.email);
   };
 
   return (
