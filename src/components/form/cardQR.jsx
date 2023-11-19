@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Card, Skeleton, Switch, Space, QRCode, Flex, Button, ColorPicker, Checkbox } from 'antd';
 import { SearchOutlined, DeleteFilled, HeartFilled, HeartOutlined, CopyFilled } from '@ant-design/icons';
-import { setColor } from '../../API/noteAPI';
-
+import { copyNote, deleteNote, setColor, setImportant } from '../../API/noteAPI';
+import { UserContext } from '../../context/userContext';
 const CardQR = ({ onColorChange, ...props }) => {
-
+    const { user, setUser } = useContext(UserContext);
     const [reload, setReload] = useState("");
 
     const { Meta } = Card;
@@ -16,16 +16,16 @@ const CardQR = ({ onColorChange, ...props }) => {
     };
     useEffect(() => {
         setlink("https://snolan.tech/" + props.nid);
-        
         setCurrentColor(props.color)
         setContrastColor(invertColor(props.color))
-    }, [props.nid,props.color]);
+        console.log("check proppp", props);
+    }, [props.nid, props.color]);
 
-    const [currentColor,setCurrentColor] = useState(props.color); // Thay đổi màu hiện tại tại đây
-    const [contrastColor,setContrastColor] = useState(invertColor(props.color));
+    const [currentColor, setCurrentColor] = useState(props.color); // Thay đổi màu hiện tại tại đây
+    const [contrastColor, setContrastColor] = useState(invertColor(props.color));
 
 
-    const setcolortoDB= async(color) =>{    
+    const setcolortoDB = async (color) => {
         onColorChange(color);
         const res = await setColor(props.nid, color);
         console.log("ressss", res);
@@ -35,40 +35,53 @@ const CardQR = ({ onColorChange, ...props }) => {
     function invertColor(hex) {
         // Remove the hash from the color if it's there
         hex = hex.replace('#', '');
-      
+
         // Convert the hex color to RGB
         let r = parseInt(hex.substring(0, 2), 16);
         let g = parseInt(hex.substring(2, 4), 16);
         let b = parseInt(hex.substring(4, 6), 16);
-      
+
         // Invert the colors
         r = (255 - r).toString(16);
         g = (255 - g).toString(16);
         b = (255 - b).toString(16);
-      
+
         // Ensure 2 digits by color
         if (r.length == 1)
-          r = "0" + r;
+            r = "0" + r;
         if (g.length == 1)
-          g = "0" + g;
+            g = "0" + g;
         if (b.length == 1)
-          b = "0" + b;
-      
+            b = "0" + b;
+
         // Return the inverted color
         return "#" + r + g + b;
-      }
+    }
 
     const [link, setlink] = useState("https://snolan.tech/");
     const logo = "https://firebasestorage.googleapis.com/v0/b/nolanwork-128ad.appspot.com/o/image%2Fthuytrang%2Fnolan.png?alt=media&token=cb17e559-b3f9-4b34-86a7-ac1d1861df95&_gl=1*it3so1*_ga*MTE0OTU1Njk1Ny4xNjk5MjU5NTg2*_ga_CW55HF8NVT*MTY5OTI2NTc4Ni4yLjEuMTY5OTI2NTc5Mi41NC4wLjA."
     const colorPick = (color) => {
         console.log("check color:kkk ", color.toHexString());
 
-       
+
         setcolortoDB(color.toHexString())
     }
-    const onChangeCheckbox = (e) => {
+    const onChangeCheckbox = async (e) => {
         console.log(`checked = ${e.target.checked}`);
+        const res = await setImportant(props.nid, user.uid)
+        console.log("check importsnt", res);
+        onColorChange("black")
+
     };
+    const handleDelete = async () => {
+        const res= await deleteNote(props.nid)
+        onColorChange("black", res)
+
+    }
+    const handleCopy = async()=>{
+        const res = await copyNote(props.nid, user.uid)
+        console.log("copy", res);
+    }
     return (
         <div>
             <div style={{ display: "flex", justifyContent: "space-evenly", alignItems: "center", textAlign: "center" }}>
@@ -111,18 +124,35 @@ const CardQR = ({ onColorChange, ...props }) => {
                 </div>
                 <Flex gap="small" vertical>
                     <Flex wrap="wrap" gap="small">
+                        {
+                            user.uid === props.uid ?
+                                (
+                                    <>
+                                        <Button type="dashed" icon={<CopyFilled />} onClick={handleCopy}>
+                                            sao chép
+                                        </Button>
+                                        <Checkbox onChange={onChangeCheckbox} checked={props.importance} >Quan trọng</Checkbox>
 
-                        <Button type="primary" icon={checked ? <HeartOutlined /> : <HeartFilled />}>
-                            {checked ? "theo dõi" : "bỏ theo dõi"}
-                        </Button>
+                                        <Button type="dashed" icon={<DeleteFilled />} danger onClick={handleDelete}>
+                                            xóa
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Button type="primary" icon={checked ? <HeartOutlined /> : <HeartFilled />}>
+                                            {checked ? "theo dõi" : "bỏ theo dõi"}
+                                        </Button>
 
 
-                        <Button type="dashed" icon={<CopyFilled />}>
-                            sao chép
-                        </Button>
-                        <Button type="dashed" icon={<DeleteFilled />} danger>
-                            xóa
-                        </Button>
+                                        <Button type="dashed" icon={<CopyFilled />}>
+                                            sao chép
+                                        </Button>
+                                    </>
+                                )
+                        }
+
+
+
                     </Flex>
                     <ColorPicker size="large"
                         showText
@@ -171,7 +201,6 @@ const CardQR = ({ onColorChange, ...props }) => {
                         onChangeComplete={(color) => {
                             colorPick(color);
                         }} />
-                    <Checkbox onChange={onChangeCheckbox}>Quan trọng</Checkbox>
                 </Flex>
             </div>
 

@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Form, Input } from 'antd';
 import { Link } from "react-router-dom";
 import { register } from "../../API/userAPI";
 function Register() {

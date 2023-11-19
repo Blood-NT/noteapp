@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import Login from './components/home/login';
-import { useContext, useEffect,useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { UserContext } from './context/userContext';
 import Home from './components/home/home';
 import { Routes, Route } from 'react-router-dom';
@@ -10,6 +10,7 @@ import Myform from './components/form/myform';
 import { Flex } from 'antd';
 import Marquee from 'react-fast-marquee';
 import Forgot from './components/home/forgot';
+import Info from './components/info/info';
 function App() {
 
   const { user, setUser } = useContext(UserContext);
@@ -22,27 +23,31 @@ function App() {
       //   localStorage.setItem("accessToken", res.data?.accessToken);
       //   setUser(res.data);
       // }
+
     };
     fetchData();
   }, []);
+  console.log("check userr", user);
 
   console.log({ user });
- 
+
   return (
     <>
-    <Flex style={{ paddingBottom:"10px"}}>
-    
-      <Marquee
-      className="marquee"
-        behavior="scroll"
-        direction="left"
-        speed="50"
-        style={{ height: '50px', backgroundColor: '#eb2f964d' }}
-      pauseOnHover gradient={false}>
-        {/* Qua môn thầy trụ ^^  */}
-      </Marquee>
+      <Flex style={{ paddingBottom: "10px" }}>
 
-    </Flex>
+        <Marquee
+          className="marquee"
+          behavior="scroll"
+          direction="left"
+          speed="50"
+          style={{ height: '50px', backgroundColor: '#eb2f964d' }}
+          pauseOnHover gradient={false}>
+          {/* Qua môn thầy trụ ^^  */}
+        </Marquee>
+        {
+          user? (<Info/>) :<></>
+        }
+      </Flex>
       <Routes>
         <Route path="" element={user ? <Home /> : <Login />} />
       </Routes>
@@ -50,7 +55,7 @@ function App() {
         <Route path="/home" element={<Home />} />
       </Routes>
       <Routes>
-        <Route path="/login" element={user ? <Home /> : <Login />}/>
+        <Route path="/login" element={user ? <Home /> : <Login />} />
       </Routes>
       <Routes>
         <Route path="/register" element={<Register />} />

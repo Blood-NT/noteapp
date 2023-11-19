@@ -50,13 +50,43 @@ const updateTitleNote = async(nid, title) => {
 }
 
 
+const setImportant = async(nid, uid) => {
+    const body={
+        nid:nid,
+        uid:uid
+        }
+    return await axios.post('http://localhost:8083/note/setImportance', body);
+}
+const getInfoNote = async(nid) => {
+    const body={
+        nid:nid
+    }
+    return await axios.post('http://localhost:8083/note/getInfo', body);
+}
 
-
+const deleteNote = async(nid) => {
+    const body={
+        nid:nid
+    }
+    return await axios.post('http://localhost:8083/note/delete', body);
+}
+const copyNote = async(nid, uid) => {
+    const body={
+        nid:nid,
+        uid:uid
+    }
+    return await axios.post('http://localhost:8083/note/copy', body);
+}
 export {
 
     createNote,
     getAllNote,
     getDataNote,
     updateNote,
-    setColor, updateTitleNote
+    setColor, 
+    updateTitleNote,
+    setImportant,
+    getInfoNote,
+    deleteNote,
+    copyNote
 }

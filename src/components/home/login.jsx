@@ -20,13 +20,12 @@ function Login () {
             }
             setUser(datauser);
             localStorage.setItem("token", res.data.accessToken);
-        }
-       
+        }   
     }
       fetchData();
     }, []);
     const onFinish = async (values) => {
-        const res = await login(values.username, values.password);
+        const res = await login(values.username, values.password, values.remember);
         console.log("loginnnn",res);
         if (res.statusCode===200) {
             const datauser={
