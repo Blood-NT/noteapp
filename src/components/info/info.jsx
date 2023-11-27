@@ -3,6 +3,7 @@ import { Button, Modal, Input, Form, Drawer, Flex } from 'antd';
 import { UserContext } from '../../context/userContext';
 import { changePassword } from '../../API/userAPI';
 
+import { UserOutlined } from '@ant-design/icons';
 
 
 function Info() {
@@ -51,9 +52,11 @@ function Info() {
     };
     return (
         <>
-            <Button type="primary" onClick={showDrawer}>
+            {/* <Button type="primary" onClick={showDrawer}>
                 Open
-            </Button>
+            </Button> */}
+            <Button type="dashed" danger shape="circle" icon={<UserOutlined />} size="large" onClick={showDrawer} style={{marginRight:"10px"}}/>
+
             <Drawer title={user.uid} placement="right" onClose={onClose} open={open}>
                    <Flex  gap="middle" vertical>
                    <Button type="primary" onClick={showModalChangepass}>
@@ -91,7 +94,6 @@ function Info() {
                     form.resetFields();
                     setchangepass(false);
                 }}
-
                 onOk={() => {
                     form
                         .validateFields()

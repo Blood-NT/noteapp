@@ -1,30 +1,55 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Card, Skeleton, Switch, Space, QRCode, Flex, Button, ColorPicker, Checkbox } from 'antd';
-import { SearchOutlined, DeleteFilled, HeartFilled, HeartOutlined, CopyFilled } from '@ant-design/icons';
-import { copyNote, deleteNote, setColor, setImportant } from '../../API/noteAPI';
+import { Card, Modal, Select, Skeleton, Switch, Space, QRCode, Flex, Button, ColorPicker, Checkbox } from 'antd';
+import { DeleteFilled, HeartFilled, HeartOutlined, CopyFilled } from '@ant-design/icons';
+import { copyNote, customShare, deleteNote, getInfoNote, getSaveNote, saveNote, setColor, setImportant } from '../../API/noteAPI';
 import { UserContext } from '../../context/userContext';
+
 const CardQR = ({ onColorChange, ...props }) => {
     const { user, setUser } = useContext(UserContext);
     const [reload, setReload] = useState("");
-
     const { Meta } = Card;
-
+    const [currentColor, setCurrentColor] = useState(props.color); // Thay đổi màu hiện tại tại đây
+    const [contrastColor, setContrastColor] = useState(invertColor(props.color));
     const [loading, setLoading] = useState(true);
     const checked = false;
-    const onChange = (checked) => {
-        setLoading(!checked);
-    };
+    const { Option } = Select;
+    const [type, setType] = useState('close');
+    const [in4Note, setIn4Note] = useState();
+    const [follow, setFollow] = useState(false);
+
+    const [url, setUrl] = useState(window.location.href);
+    console.log("url",window.location.href);
     useEffect(() => {
-        setlink("https://snolan.tech/" + props.nid);
+        const fetchData = async () => {
+            if (window.location.href.includes("view")) {
+                const res = await getInfoNote(props.nid);
+                console.log("user qr", res);
+                setIn4Note(res.data.data);
+                const res2 = await getSaveNote(user.uid, res.data.data.nid);
+                console.log("user qr2", res2.data);
+                if (res2.data.statusCode==404) {
+                    setFollow(true);
+                }else{
+                    setFollow(false);
+                }
+            }
+        }
+        fetchData();
+    }, [])
+
+    useEffect(() => {
+        setlink("https://snolan.tech/view/" + props.nid);
         setCurrentColor(props.color)
         setContrastColor(invertColor(props.color))
         console.log("check proppp", props);
+        const fetchData = async () => {
+            const res = await getInfoNote(props.nid);
+            setIn4Note(res.data.data);
+
+        }
+        fetchData();
+
     }, [props.nid, props.color]);
-
-    const [currentColor, setCurrentColor] = useState(props.color); // Thay đổi màu hiện tại tại đây
-    const [contrastColor, setContrastColor] = useState(invertColor(props.color));
-
-
     const setcolortoDB = async (color) => {
         onColorChange(color);
         const res = await setColor(props.nid, color);
@@ -33,81 +58,83 @@ const CardQR = ({ onColorChange, ...props }) => {
         setContrastColor(invertColor(color))
     }
     function invertColor(hex) {
-        // Remove the hash from the color if it's there
         hex = hex.replace('#', '');
-
-        // Convert the hex color to RGB
         let r = parseInt(hex.substring(0, 2), 16);
         let g = parseInt(hex.substring(2, 4), 16);
         let b = parseInt(hex.substring(4, 6), 16);
-
-        // Invert the colors
         r = (255 - r).toString(16);
         g = (255 - g).toString(16);
         b = (255 - b).toString(16);
-
-        // Ensure 2 digits by color
         if (r.length == 1)
             r = "0" + r;
         if (g.length == 1)
             g = "0" + g;
         if (b.length == 1)
             b = "0" + b;
-
-        // Return the inverted color
         return "#" + r + g + b;
     }
-
-    const [link, setlink] = useState("https://snolan.tech/");
+    const [link, setlink] = useState("https://snolan.tech/view/");
     const logo = "https://firebasestorage.googleapis.com/v0/b/nolanwork-128ad.appspot.com/o/image%2Fthuytrang%2Fnolan.png?alt=media&token=cb17e559-b3f9-4b34-86a7-ac1d1861df95&_gl=1*it3so1*_ga*MTE0OTU1Njk1Ny4xNjk5MjU5NTg2*_ga_CW55HF8NVT*MTY5OTI2NTc4Ni4yLjEuMTY5OTI2NTc5Mi41NC4wLjA."
     const colorPick = (color) => {
-        console.log("check color:kkk ", color.toHexString());
-
-
         setcolortoDB(color.toHexString())
     }
     const onChangeCheckbox = async (e) => {
-        console.log(`checked = ${e.target.checked}`);
         const res = await setImportant(props.nid, user.uid)
-        console.log("check importsnt", res);
         onColorChange("black")
+        const res2 = await getInfoNote(props.nid);
+        setIn4Note(res2.data.data);
 
     };
     const handleDelete = async () => {
-        const res= await deleteNote(props.nid)
+        const res = await deleteNote(props.nid)
         onColorChange("black", res)
-
     }
-    const handleCopy = async()=>{
-        const res = await copyNote(props.nid, user.uid)
+    const handleCopy = async () => {
+        const res = await copyNote(props.nid, user?.uid)
         console.log("copy", res);
     }
+    // check share
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const showModal = () => {
+        setLoading(type=="close"?true:false)
+        setIsModalOpen(true);
+    };
+    const handleOk = async() => {
+        setIsModalOpen(false);
+        const res = await customShare(props.nid, user.uid, type==="view"?1:(type==="edit"?2:0))
+        console.log("done share", res);
+
+        setLoading(true)
+    };
+    const handleCancel = () => {
+        setIsModalOpen(false);
+        setLoading(true)
+
+    };
+
+
+    const onChangeShare = (value) => {
+        setType(value);
+        setLoading(value=="close"?true:false)
+        if (value === "view") {
+            setlink("https://snolan.tech/view/" + props.nid);
+        }
+        else {
+            setlink("https://snolan.tech/edit/" + props.nid);
+        }
+    };
+
+    const handleFollow = async () => {
+
+        const res = await saveNote(props.uid,user.uid,props.nid)
+        console.log("check save note",res);
+        setFollow(!follow);
+
+
+    }
+
     return (
         <div>
-            <div style={{ display: "flex", justifyContent: "space-evenly", alignItems: "center", textAlign: "center" }}>
-                <Switch checked={!loading} onChange={onChange} />
-                <p style={{ marginLeft: "8px" }}>Text beside the button</p>
-            </div>
-
-            <Card
-                hoverable
-                style={{ width: 400 }}
-                cover={
-                    <Skeleton loading={loading} avatar active>
-                        <Space>
-                            <QRCode
-                                value={link}
-                                size={300}
-                                color={currentColor}
-                                // icon="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
-                                errorLevel="H"
-                                bgColor={contrastColor}
-                            />
-                        </Space>
-                        <Meta title={props.id} description={link} />
-                    </Skeleton>
-                }
-            ></Card>
 
             <div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -131,28 +158,25 @@ const CardQR = ({ onColorChange, ...props }) => {
                                         <Button type="dashed" icon={<CopyFilled />} onClick={handleCopy}>
                                             sao chép
                                         </Button>
-                                        <Checkbox onChange={onChangeCheckbox} checked={props.importance} >Quan trọng</Checkbox>
-
+                                        <Checkbox onChange={onChangeCheckbox} checked={in4Note?.importance} >Quan trọng</Checkbox>
                                         <Button type="dashed" icon={<DeleteFilled />} danger onClick={handleDelete}>
                                             xóa
+                                        </Button>
+                                        <Button type="primary" onClick={showModal}>
+                                            Open Modal
                                         </Button>
                                     </>
                                 ) : (
                                     <>
-                                        <Button type="primary" icon={checked ? <HeartOutlined /> : <HeartFilled />}>
-                                            {checked ? "theo dõi" : "bỏ theo dõi"}
+                                        <Button type="primary" onClick={handleFollow} icon={follow ? <HeartOutlined /> : <HeartFilled />}>
+                                            {follow ? "theo dõi" : "bỏ theo dõi"}
                                         </Button>
-
-
-                                        <Button type="dashed" icon={<CopyFilled />}>
+                                        <Button type="dashed" icon={<CopyFilled />} onClick={handleCopy}>
                                             sao chép
                                         </Button>
                                     </>
                                 )
                         }
-
-
-
                     </Flex>
                     <ColorPicker size="large"
                         showText
@@ -203,9 +227,42 @@ const CardQR = ({ onColorChange, ...props }) => {
                         }} />
                 </Flex>
             </div>
+            <>
+
+                <Modal title={`Chia sẽ   ---   "${props.title}"`} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+
+                    <Flex vertical>
+                        <Select value={type} onChange={onChangeShare}>
+                            <Option value="view">Chỉ xem (không thể chỉnh sửa)</Option>
+                            <Option value="edit">Cho phép chỉnh sửa</Option>
+                            <Option value="close">Tắt chia sẽ</Option>
+                        </Select>
+
+                        <Card
+                            hoverable
+                            style={{ width: 400 }}
+                            cover={
+                                <Skeleton loading={loading} avatar active>
+                                    <Space>
+                                        <QRCode
+                                            value={link}
+                                            size={300}
+                                            color={"pink"}
+                                            // icon="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
+                                            errorLevel="H"
+                                            bgColor={"black"}
+                                        />
+                                    </Space>
+                                    <Meta title={props.id} description={link} />
+                                </Skeleton>
+                            }
+                        ></Card>
+
+                    </Flex>
+                </Modal>
+            </>
 
         </div>
     );
 }
-
 export default CardQR;

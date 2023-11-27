@@ -1,20 +1,20 @@
 
 
-import { React, useEffect, useState,useContext } from 'react';
-import { DownOutlined } from '@ant-design/icons';
+import { React, useEffect, useState, useContext } from 'react';
+import { DownOutlined ,WarningOutlined ,CheckCircleFilled} from '@ant-design/icons';
 // import type { MenuProps } from 'antd';
 
-import { Avatar, List, Dropdown, Space, Typography,Input } from 'antd';
+import { Avatar, List, Dropdown, Space, Typography, Input } from 'antd';
 import Myform from '../form/myform';
 import CardQR from '../form/cardQR';
-import { AndroidOutlined, AppleOutlined } from '@ant-design/icons';
+import { HeartFilled, } from '@ant-design/icons';
 import { Tabs } from 'antd';
 import { createNote, getAllNote } from '../../API/noteAPI';
 import { UserContext } from '../../context/userContext';
 
 function Home() {
     const { Search } = Input;
-    
+
     const [idnote, setIdNote] = useState();
     const { user, setUser } = useContext(UserContext);
     const items = [
@@ -34,7 +34,7 @@ function Home() {
     ];
 
     const [data, setData] = useState([]);
-    const [reloadd,setReloadd]=useState(false);
+    const [reloadd, setReloadd] = useState(false);
     useEffect(() => {
         const fetchData = async () => {
             const res = await getAllNote(user.uid);
@@ -54,7 +54,7 @@ function Home() {
             const res = await getAllNote(user.uid);
             setData(res.data.data);
         }
-         fetchData();
+        fetchData();
     }, [reloadd])
     // const data = [{
     //     id: 1,
@@ -255,27 +255,38 @@ function Home() {
     }
     const handleColorChange = (newColor) => {
         console.log('Màu sắc đã thay đổi thành: ', newColor);
-       setReloadd(!reloadd);
-      };
-      const handleChangetitle = (newTitle) => {
-        alert('Tiêu đề đã thay đổi thành: ', newTitle)
-       setReloadd(!reloadd);
-      };
+        setReloadd(!reloadd);
+    };
+    const handleChangetitle = (newTitle) => {
+        setReloadd(!reloadd);
+    };
     return (
         < div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ minWidth: "30%", maxWidth: "30%" }}>
                 <Tabs
                     defaultActiveKey="1"
                     onChange={onChangeTab}
-                    items={[AppleOutlined, AndroidOutlined].map((Icon, i) => {
+                    items={[CheckCircleFilled, WarningOutlined,HeartFilled].map((Icon, i) => {
                         const id = String(i + 1);
 
                         return {
                             label: (
-                                <span>
+                                id === "1" ? <span>
                                     <Icon />
-                                    {id}
+                                    Mặc định
                                 </span>
+                                    : (
+                                        id === "2" ? <span>
+                                            <Icon  />
+                                            Quan trọng
+                                            </span>
+                                            : <span>
+                                                <Icon />
+                                                Yêu thích
+                                            </span>
+                                    )
+
+
                             ),
                             key: id,
                         };
@@ -298,14 +309,12 @@ function Home() {
                         },
                         pageSize: 5,
                     }}
-                    // locale={{emptyText:'Không có ghi chú nào'}}
                     dataSource={dataFilter}
                     renderItem={(item) => (
                         <List.Item
                             key={item.title}
                             onClick={() => setIdNote(item)}
                             style={{ background: item.color }}
-
                         >
                             <div style={{ display: "flex", justifyContent: "space-between" }}>
                                 <div style={{ width: "90%" }}>
@@ -313,7 +322,6 @@ function Home() {
                                         avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${item.id}`} />}
                                         title={item.title}
                                         description={`Create: ${item.created} -- update: ${item.update}`}
-
                                     />
                                 </div>
                                 <Dropdown
@@ -341,7 +349,7 @@ function Home() {
             {idnote && <Myform {...idnote} onTitleChange={handleChangetitle} style={{ width: "70vw" }} />}
 
             {/* <CardQR  {...idnote} /> */}
-           {idnote &&  <CardQR  {...idnote} onColorChange={handleColorChange} />}
+            {idnote && <CardQR  {...idnote} onColorChange={handleColorChange} />}
         </div>
     );
 }

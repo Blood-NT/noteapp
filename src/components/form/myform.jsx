@@ -1,41 +1,66 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { uploadImage } from "../../config/upload";
-import { Input,Flex } from "antd";
+import { Input, Flex, Button } from "antd";
 import { getDataNote, updateNote, updateTitleNote } from "../../API/noteAPI";
-// import { htmlToMarkdown, markdownToHtml } from "./Parser";
-// import uploadToCloudinary from "./upload";
+import { UserContext } from "../../context/userContext";
+
+import socketIOClient from 'socket.io-client';
 
 
-export default function Myform({onTitleChange,...props}) {
+export default function Myform({ onTitleChange, ...props }) {
     //   const [value, setValue] = useState(markdownToHtml(props.value || ""));
     const [value, setValue] = useState("");
     const reactQuillRef = useRef(null);
     const { Search } = Input;
+    const ENDPOINT = "http://localhost:8083";
+    const [noteData, setNoteData] = useState();
+    const socket = socketIOClient(ENDPOINT);
+
+    const{user}=useContext(UserContext);
+    // gửi api sau cập nhật note
+    useEffect(() => {
+        // const logValue = async() => {
+        //     const res = await updateNote(props.nid, props.uid, value)
+        // };
+
+        // const interval = setInterval(logValue, 2000);
+
+        // return () => {
+        //     clearInterval(interval);
+        // };
+        const fecthData = async () => {
+            const res = await updateNote(props.nid, props.uid, value)
+            console.log("update nef", res);
+        }
+        const updateNote = (nid,uid) => {
+            socket.emit('updateNote', {uid, nid, titleNote, value  });
+        };
+        updateNote(user.uid,props.nid);
+        fecthData();
 
 
-    // gửi api sau 2s
-    // useEffect(() => {
-    //     const logValue = () => {
-    //       console.log("Current value: ", value);
-    //     };
-    
-    //     const interval = setInterval(logValue, 2000);
-    
-    //     return () => {
-    //       clearInterval(interval);
-    //     };
-    //   }, [value]);
-  
-    const onSearch = async(check) => {
-        onTitleChange(check);
-        // await updateTitleNote(props.nid, value); done
-        // làm tạm cái lưu ở đây :V
+    }, [value]);
 
-        console.log(`nid:${props.nid} uid:${props.uid}`);
-        const res= await updateNote(props.nid,props.uid,value)
-        console.log("update nef",res.data);
+    useEffect(() => {
+        socket.on('connect', () => {
+            console.log('Kết nối đến server thành công');
+        });
+        socket.emit('joinNoteRoom', props.nid);
+
+        return () => {
+            socket.disconnect(); 
+        };
+    }, []);
+
+    // Hàm để phát sự kiện 'updateNote' khi muốn cập nhật note
+   
+
+    const onSearch = async (check) => {
+        // onTitleChange(check);
+        const res = await updateNote(props.nid, props.uid, value)
+        console.log("update nef", res);
     }
 
     useEffect(() => {
@@ -46,24 +71,16 @@ export default function Myform({onTitleChange,...props}) {
             }
         }
         fetchData();
-    
         setValue("check" + props.nid);
         // tự động lấy dữ liệu từ props.value
-    },[props.nid]);
-    
+    }, [props.nid]);
+
 
     const onChange = (content) => {
         setValue(content);
-        // if (props.onChange) {
-        //     props.onChange({
-        //         html: content,
-        //         // markdown: htmlToMarkdown(content),
-        //     });
-        // }
-        // console.log("content: ", content);
-        // console.log(props);
+        //
     };
-const [save, setSave] = useState(false);
+    const [save, setSave] = useState(false);
 
     const imageHandler = useCallback(() => {
         const input = document.createElement("input");
@@ -83,65 +100,72 @@ const [save, setSave] = useState(false);
             }
         };
     }, []);
+    const [titleNote, setTitleNote] = useState("");
 
+    const handleonTitleChange = async (e) => {
+        if (e.target.value.length > 0) {
+            const res = await updateTitleNote(props.nid, props.uid, e.target.value);
+            setTitleNote(e.target.value);
+            console.log("update title", res);
+            onTitleChange(e.target.value)
+        }
+    }
     return (
         <Flex gap="middle" vertical>
-         <Search
-                    placeholder={props.title}
-                    // defaultValue={props.title}
-                    allowClear
-                    enterButton="edit title"
-                    size="large"
-                    onSearch={onSearch}
-                />
+            <Flex>
 
-        <ReactQuill 
-            ref={reactQuillRef}
-            theme="snow"
-            placeholder="Start writing..."
-            modules={{
-                toolbar: {
-                    container: [
-                        [{ header: "1" }, { header: "2" }, { font: [] }],
-                        [{ size: [] }],
-                        ["bold", "italic", "underline", "strike", "blockquote"],
-                        [
-                            { list: "ordered" },
-                            { list: "bullet" },
-                            { indent: "-1" },
-                            { indent: "+1" },
+                <Input placeholder={props.title} onChange={handleonTitleChange} />
+                <Button type="primary" onClick={onSearch}>Lưu</Button>
+            </Flex>
+
+
+            <ReactQuill
+                ref={reactQuillRef}
+                theme="snow"
+                placeholder="Start writing..."
+                modules={{
+                    toolbar: {
+                        container: [
+                            [{ header: "1" }, { header: "2" }, { font: [] }],
+                            [{ size: [] }],
+                            ["bold", "italic", "underline", "strike", "blockquote"],
+                            [
+                                { list: "ordered" },
+                                { list: "bullet" },
+                                { indent: "-1" },
+                                { indent: "+1" },
+                            ],
+                            ["link", "image", "video"],
+                            ["code-block"],
+                            ["clean"],
                         ],
-                        ["link", "image", "video"],
-                        ["code-block"],
-                        ["clean"],
-                    ],
-                    handlers: {
-                        image: imageHandler,
+                        handlers: {
+                            image: imageHandler,
+                        },
                     },
-                },
-                clipboard: {
-                    matchVisual: false,
-                },
-            }}
-            formats={[
-                "header",
-                "font",
-                "size",
-                "bold",
-                "italic",
-                "underline",
-                "strike",
-                "blockquote",
-                "list",
-                "bullet",
-                "indent",
-                "link",
-                "image",
-                "video",
-                "code-block",
-            ]}
-            value={value}
-            onChange={onChange}
+                    clipboard: {
+                        matchVisual: false,
+                    },
+                }}
+                formats={[
+                    "header",
+                    "font",
+                    "size",
+                    "bold",
+                    "italic",
+                    "underline",
+                    "strike",
+                    "blockquote",
+                    "list",
+                    "bullet",
+                    "indent",
+                    "link",
+                    "image",
+                    "video",
+                    "code-block",
+                ]}
+                value={value}
+                onChange={onChange}
             />
         </Flex>
     );

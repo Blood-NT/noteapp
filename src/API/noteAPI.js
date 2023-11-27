@@ -39,9 +39,10 @@ const setColor = async(nid, color) => {
     }
     return await axios.post('http://localhost:8083/note/setColor', body);
 }
-const updateTitleNote = async(nid, title) => {
+const updateTitleNote = async(nid, uid, title) => {
     const body={
         nid:nid,
+        uid:uid,
         title:title
     }
     const res= await axios.post('http://localhost:8083/note/updateTitle', body);
@@ -53,7 +54,8 @@ const updateTitleNote = async(nid, title) => {
 const setImportant = async(nid, uid) => {
     const body={
         nid:nid,
-        uid:uid
+        uid:uid,
+
         }
     return await axios.post('http://localhost:8083/note/setImportance', body);
 }
@@ -77,6 +79,30 @@ const copyNote = async(nid, uid) => {
     }
     return await axios.post('http://localhost:8083/note/copy', body);
 }
+
+const saveNote = async(hid,gid,nid) => {
+    const body={
+        hid:hid,
+        gid:gid,
+        nid:nid
+    }
+    return await axios.post('http://localhost:8083/note/save', body);
+}
+const getSaveNote = async(gid,nid) => {
+    const body={
+        gid:gid,
+        nid:nid
+    }
+    return await axios.post('http://localhost:8083/note/getdatasave', body);
+}
+
+const customShare = async(nid,uid) => {
+    const body={
+        nid:nid,
+        uid:uid,
+    }
+    return await axios.post('http://localhost:8083/note/openshare', body);
+}
 export {
 
     createNote,
@@ -88,5 +114,9 @@ export {
     setImportant,
     getInfoNote,
     deleteNote,
-    copyNote
+    copyNote,
+    saveNote,
+    getSaveNote,
+    customShare
+
 }
