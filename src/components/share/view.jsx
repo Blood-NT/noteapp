@@ -8,7 +8,7 @@ import CardQR from '../form/cardQR';
 import { useParams } from 'react-router-dom';
 
 
-import socketIOClient from 'socket.io-client';
+// import socketIOClient from 'socket.io-client';
 
 
 
@@ -18,27 +18,27 @@ function View() {
     const { idshare } = useParams();
     const [infonote, setInfonote] = useState();
 
-    // socket
-       const ENDPOINT = "http://localhost:8083";
+    // // socket
+    //    const ENDPOINT = "http://localhost:8083";
     const [noteData, setNoteData] = useState();
-    const socket = socketIOClient(ENDPOINT);
+    // const socket = socketIOClient(ENDPOINT);
   
-    useEffect(() => {
-      socket.on('connect', () => {
-        console.log('Kết nối đến server thành công');
-      });
-      // Lắng nghe sự kiện 'noteUpdated' và cập nhật dữ liệu tương ứng
-      socket.emit('joinNoteRoom', idshare);
+    // useEffect(() => {
+    //   socket.on('connect', () => {
+    //     console.log('Kết nối đến server thành công');
+    //   });
+    //   // Lắng nghe sự kiện 'noteUpdated' và cập nhật dữ liệu tương ứng
+    //   socket.emit('joinNoteRoom', idshare);
 
-      socket.on('noteUpdated', (data) => {
-        console.log('Note đã được cập nhật:', data);
-        setNoteData(data);
-      });
+    //   socket.on('noteUpdated', (data) => {
+    //     console.log('Note đã được cập nhật:', data);
+    //     setNoteData(data);
+    //   });
   
-      return () => {
-        socket.disconnect(); // Ngắt kết nối socket khi component unmount
-      };
-    }, []);
+    //   return () => {
+    //     socket.disconnect(); // Ngắt kết nối socket khi component unmount
+    //   };
+    // }, []);
 
     //
     useEffect(() => {
@@ -68,18 +68,18 @@ function View() {
     }, [])
 
     // cập nhật sau 2s
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         const fetchData = async () => {
-    //             const res = await getDataNote(idshare);
-    //             setContent(res.data.data?.content);
-    //             console.log("check", res);
-    //         }
-    //         console.log("checkkkkmkm", user);
-    //         fetchData();
-    //     }, 2000);
-    //     return () => clearInterval(interval);
-    // }, [])
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const fetchData = async () => {
+                const res = await getDataNote(idshare);
+                setContent(res.data.data?.content);
+                console.log("check", res);
+            }
+            console.log("checkkkkmkm", user);
+            fetchData();
+        }, 2000);
+        return () => clearInterval(interval);
+    }, [])
     const handleLogin = async (values) => {
         const res = await login(values.username, values.password, values.remember);
         console.log("loginnnn", res);

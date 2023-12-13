@@ -13,9 +13,13 @@ import Forgot from './components/home/forgot';
 import Info from './components/info/info';
 import Edit from './components/share/edit';
 import View from './components/share/view';
+import {notification } from 'antd';
+import { NotifiContext } from './components/notify/notify';
+
 function App() {
 
   const { user, setUser } = useContext(UserContext);
+  const {message, setMessage} = useContext(NotifiContext);
   useEffect(() => {
     // check login
     const fetchData = async () => {
@@ -33,10 +37,26 @@ function App() {
   useEffect(() => {
   console.log("check userr ----", user);
   }, [user]);
+  
+  useEffect(() => {
+    if (message)
+        showNotification(message.type, message.message);
+  }, [message]);
+  const [api, contextHolder] = notification.useNotification();
+
+  const showNotification = (type, text) => {
+    console.log("check notifi", type, text);
+    api.info({
+      message: text,
+      description: text,
+      placement: 'top',
+    });
+  };
 
 
   return (
     <>
+      {contextHolder}
       <Flex style={{ marginBottom: "10px", backgroundColor: '#eb2f964d', textAlign: "center", alignItems: "center" }}>
 
         <Marquee

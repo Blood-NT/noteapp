@@ -6,7 +6,7 @@ import { Input, Flex, Button } from "antd";
 import { getDataNote, updateNote, updateTitleNote } from "../../API/noteAPI";
 import { UserContext } from "../../context/userContext";
 
-import socketIOClient from 'socket.io-client';
+// import socketIOClient from 'socket.io-client';
 
 
 export default function Myform({ onTitleChange, ...props }) {
@@ -14,9 +14,9 @@ export default function Myform({ onTitleChange, ...props }) {
     const [value, setValue] = useState("");
     const reactQuillRef = useRef(null);
     const { Search } = Input;
-    const ENDPOINT = "http://localhost:8083";
-    const [noteData, setNoteData] = useState();
-    const socket = socketIOClient(ENDPOINT);
+    // const ENDPOINT = "http://localhost:8083";
+    // const [noteData, setNoteData] = useState();
+    // const socket = socketIOClient(ENDPOINT);
 
     const{user}=useContext(UserContext);
     // gửi api sau cập nhật note
@@ -34,25 +34,25 @@ export default function Myform({ onTitleChange, ...props }) {
             const res = await updateNote(props.nid, props.uid, value)
             console.log("update nef", res);
         }
-        const updateNote = (nid,uid) => {
-            socket.emit('updateNote', {uid, nid, titleNote, value  });
-        };
-        updateNote(user.uid,props.nid);
+        // const updateNote = (nid,uid) => {
+        //     socket.emit('updateNote', {uid, nid, titleNote, value  });
+        // };
+        // updateNote(user.uid,props.nid);
         fecthData();
 
 
     }, [value]);
 
-    useEffect(() => {
-        socket.on('connect', () => {
-            console.log('Kết nối đến server thành công');
-        });
-        socket.emit('joinNoteRoom', props.nid);
+    // useEffect(() => {
+    //     socket.on('connect', () => {
+    //         console.log('Kết nối đến server thành công');
+    //     });
+    //     socket.emit('joinNoteRoom', props.nid);
 
-        return () => {
-            socket.disconnect(); 
-        };
-    }, []);
+    //     return () => {
+    //         socket.disconnect(); 
+    //     };
+    // }, []);
 
     // Hàm để phát sự kiện 'updateNote' khi muốn cập nhật note
    

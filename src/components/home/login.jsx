@@ -5,36 +5,40 @@ import { Button, Checkbox, Form, Input } from 'antd';
 import { UserContext } from "../../context/userContext";
 import { Link } from "react-router-dom";
 import { login, loginByToken } from "../../API/userAPI";
-function Login () {
+import { NotifiContext } from "../notify/notify";
+function Login() {
     const { user, setUser } = useContext(UserContext);
-
-    useEffect(  () => {
-      const fetchData = async () => {
-        const res = await loginByToken();
-        console.log(res);
-        if (res.statusCode==200) {
-            const datauser={
-                uid:res.data.uid,
-                accessToken:res.data.accessToken,
-                refreshToken:res.data.token,
+    const { setErrorCode } = useContext(NotifiContext);
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await loginByToken();
+            console.log(res);
+            if (res.statusCode == 200) {
+                const datauser = {
+                    uid: res.data.uid,
+                    accessToken: res.data.accessToken,
+                    refreshToken: res.data.token,
+                }
+                setUser(datauser);
+                localStorage.setItem("token", res.data.accessToken);
             }
-            setUser(datauser);
-            localStorage.setItem("token", res.data.accessToken);
-        }   
-    }
-      fetchData();
+        }
+        fetchData();
     }, []);
     const onFinish = async (values) => {
         const res = await login(values.username, values.password, values.remember);
-        console.log("loginnnn",res);
-        if (res.statusCode===200) {
-            const datauser={
-                uid:values.username,
-                accessToken:res.accessToken,
-                refreshToken:res.refreshToken,
+        console.log("loginnnn", res);
+        if (res.statusCode === 200) {
+            const datauser = {
+                uid: values.username,
+                accessToken: res.accessToken,
+                refreshToken: res.refreshToken,
             }
             setUser(datauser);
+            setErrorCode("LOGIN_001");
         }
+        else
+            setErrorCode("LOGIN_002");
     };
 
     return (
@@ -75,7 +79,7 @@ function Login () {
                     Log in
                 </Button>
                 Or<Link to="/register" style={{ textDecoration: "none" }}>
-                 <a > register now!</a>
+                    <a > register now!</a>
                 </Link>
             </Form.Item>
         </Form>

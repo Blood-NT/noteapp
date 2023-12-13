@@ -2,7 +2,7 @@
 
 import { React, useEffect, useState, useContext } from 'react';
 import { DownOutlined ,WarningOutlined ,CheckCircleFilled} from '@ant-design/icons';
-// import type { MenuProps } from 'antd';
+// import type { MenuProps } from 'jantd';
 
 import { Avatar, List, Dropdown, Space, Typography, Input } from 'antd';
 import Myform from '../form/myform';
@@ -56,172 +56,7 @@ function Home() {
         }
         fetchData();
     }, [reloadd])
-    // const data = [{
-    //     id: 1,
-    //     title: "title1",
-    //     note: `note1jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjote1jjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjote1jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     \jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjote1jjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjote1jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjote1jjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjote1jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjote1jjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjo
-    //     te1jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-    //     jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj`,
 
-    //     time: "time1",
-    //     color: "aqua",
-    //     update: "update time", update: "update time",
-    // },
-    // {
-    //     id: 2,
-    //     title: "title2",
-    //     note: "note2",
-    //     time: "time2",
-    //     color: "green",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 3,
-    //     title: "title3",
-    //     note: "note3",
-    //     time: "time3",
-    //     color: "yellow",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 4,
-    //     title: "title4",
-    //     note: "note4",
-    //     time: "time4",
-    //     color: "red",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 5,
-    //     title: "title5",
-    //     note: "note5",
-    //     time: "time5",
-    //     color: "pink",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 6,
-    //     title: "title6",
-    //     note: "note6",
-    //     time: "time6",
-    //     color: "aqua",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 7,
-    //     title: "title7",
-    //     note: "note7",
-    //     time: "time7",
-    //     color: "aqua",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 8,
-    //     title: "title8",
-    //     note: "note8",
-    //     time: "time8",
-    //     color: "aqua",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 9,
-    //     title: "title9",
-    //     note: "note9",
-    //     time: "time9",
-    //     color: "aqua",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 10,
-    //     title: "title10",
-    //     note: "note10",
-    //     time: "time10",
-    //     color: "aqua",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 11,
-    //     title: "title11",
-    //     note: "note11",
-    //     time: "time11",
-    //     color: "aqua",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 12,
-    //     title: "title12",
-    //     note: "note12",
-    //     time: "time12",
-    //     color: "aqua",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 13,
-    //     title: "title13",
-    //     note: "note13",
-    //     time: "time13",
-    //     color: "aqua",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 14,
-    //     title: "title14",
-    //     note: "note14",
-    //     time: "time14",
-    //     color: "aqua",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 15,
-    //     title: "title15",
-    //     note: "note15",
-    //     time: "time15",
-    //     color: "aqua",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 16,
-    //     title: "title16",
-    //     note: "note16",
-    //     time: "time16",
-    //     color: "aqua",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 17,
-    //     title: "title17",
-    //     note: "note17",
-    //     time: "time17",
-    //     color: "aqua",
-    //     update: "update time",
-    // },
-    // {
-    //     id: 18,
-    //     title: "title18",
-    //     note: "note18",
-    //     update: "update time",
-
-    // }
-    // ]
 
     const onChangeTab = (key) => {
         console.log(key);
@@ -229,7 +64,6 @@ function Home() {
         filterNotes(key);
     };
     const [idd, setidd] = useState("3");
-    // qr code card
     const [dataFilter, setDataFilter] = useState([]);
     const filterNotes = (key) => {
         if (data) {
@@ -250,7 +84,8 @@ function Home() {
     }
 
     const onSearch = (value) => {
-        createNote(value, user.username);
+        console.log("check user",user);
+        createNote(value, user.uid);
         setReloadd(!reloadd);
     }
     const handleColorChange = (newColor) => {
