@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Card, Modal, Select, Skeleton, Switch, Space, QRCode, Flex, Button, ColorPicker, Checkbox } from 'antd';
 import { DeleteFilled, HeartFilled, HeartOutlined, CopyFilled } from '@ant-design/icons';
-import { copyNote, customShare, deleteNote, getInfoNote, getSaveNote, saveNote, setColor, setImportant } from '../../API/noteAPI';
+import { copyNote, customShare, deleteNote, getInfoNote, getSaveNote, saveNote, setColor, setImportant, unSveNote } from '../../API/noteAPI';
 import { UserContext } from '../../context/userContext';
-
+import { NotifiContext } from '../notify/notify';
 const CardQR = ({ onColorChange, ...props }) => {
+    const { setErrorCode } = useContext(NotifiContext);
     const { user, setUser } = useContext(UserContext);
     const [reload, setReload] = useState("");
     const { Meta } = Card;
@@ -53,7 +54,9 @@ const CardQR = ({ onColorChange, ...props }) => {
     const setcolortoDB = async (color) => {
         onColorChange(color);
         const res = await setColor(props.nid, color);
-        console.log("ressss", res);
+        if (res.data.statusCode == 232) {
+            setErrorCode("NOTE_003");
+        }
         setCurrentColor(color)
         setContrastColor(invertColor(color))
     }
@@ -80,18 +83,31 @@ const CardQR = ({ onColorChange, ...props }) => {
     }
     const onChangeCheckbox = async (e) => {
         const res = await setImportant(props.nid, user.uid)
-        onColorChange("black")
-        const res2 = await getInfoNote(props.nid);
-        setIn4Note(res2.data.data);
+        if (res.data.statusCode == 238) {
+            onColorChange("black")
+            const res2 = await getInfoNote(props.nid);
+            setIn4Note(res2.data.data);
+            setErrorCode("NOTE_008");
+        }
 
     };
     const handleDelete = async () => {
         const res = await deleteNote(props.nid)
+        if (res.data.statusCode == 234) {
+            setErrorCode("NOTE_004");
+        }
+
+        else if (res.data.statusCode == 233) {
+            setReload(!reload);
+            setErrorCode("NOTE_005");
+        }
         onColorChange("black", res)
     }
     const handleCopy = async () => {
         const res = await copyNote(props.nid, user?.uid)
-        console.log("copy", res);
+        if (res.data.statusCode == 235) {
+            setErrorCode("NOTE_006");
+        }
     }
     // check share
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -126,9 +142,11 @@ const CardQR = ({ onColorChange, ...props }) => {
 
     const handleFollow = async () => {
 
-        const res = await saveNote(props.uid,user.uid,props.nid)
-        console.log("check save note",res);
+        const res = follow ? await saveNote(user.uid, props.nid) :  await unSveNote(user.uid, props.nid)
+        if (res.data.statusCode == 236) {
+            setErrorCode("NOTE_007");
         setFollow(!follow);
+        }
 
 
     }

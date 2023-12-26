@@ -1,7 +1,7 @@
 
 
 import { React, useEffect, useState, useContext } from 'react';
-import { DownOutlined ,WarningOutlined ,CheckCircleFilled} from '@ant-design/icons';
+import { DownOutlined, WarningOutlined, CheckCircleFilled } from '@ant-design/icons';
 // import type { MenuProps } from 'jantd';
 
 import { Avatar, List, Dropdown, Space, Typography, Input } from 'antd';
@@ -11,10 +11,10 @@ import { HeartFilled, } from '@ant-design/icons';
 import { Tabs } from 'antd';
 import { createNote, getAllNote } from '../../API/noteAPI';
 import { UserContext } from '../../context/userContext';
-
+import { NotifiContext } from '../notify/notify';
 function Home() {
     const { Search } = Input;
-
+    const { setErrorCode } = useContext(NotifiContext);
     const [idnote, setIdNote] = useState();
     const { user, setUser } = useContext(UserContext);
     const items = [
@@ -83,11 +83,20 @@ function Home() {
         }
     }
 
-    const onSearch = (value) => {
-        console.log("check user",user);
-        createNote(value, user.uid);
-        setReloadd(!reloadd);
+    const onSearch = async (value) => {
+        console.log("check user", user);
+        const res = await createNote(value, user.uid);
+        if (res.data.statusCode == 230) {
+            setReloadd(!reloadd);
+            setErrorCode("NOTE_001");
+        }
+        else if (res.data.statusCode == 231) {
+            setErrorCode("NOTE_002");
+        }
+        else
+            console.log("error create note", res);
     }
+    
     const handleColorChange = (newColor) => {
         console.log('Màu sắc đã thay đổi thành: ', newColor);
         setReloadd(!reloadd);
@@ -101,7 +110,7 @@ function Home() {
                 <Tabs
                     defaultActiveKey="1"
                     onChange={onChangeTab}
-                    items={[CheckCircleFilled, WarningOutlined,HeartFilled].map((Icon, i) => {
+                    items={[CheckCircleFilled, WarningOutlined, HeartFilled].map((Icon, i) => {
                         const id = String(i + 1);
 
                         return {
@@ -112,9 +121,9 @@ function Home() {
                                 </span>
                                     : (
                                         id === "2" ? <span>
-                                            <Icon  />
+                                            <Icon />
                                             Quan trọng
-                                            </span>
+                                        </span>
                                             : <span>
                                                 <Icon />
                                                 Yêu thích

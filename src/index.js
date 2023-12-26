@@ -14,7 +14,7 @@ root.render(
       <UserProvider>
         <NotifiProvider>
           <App />
-        </NotifiProvider>j
+        </NotifiProvider>
       </UserProvider>
     </BrowserRouter>
   </React.StrictMode>

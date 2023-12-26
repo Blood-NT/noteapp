@@ -1,14 +1,25 @@
 
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { Form, Input, Button } from 'antd';
 import { forgotPassword } from '../../API/userAPI';
-
+import { useNavigate } from 'react-router-dom';
+import { NotifiContext } from '../notify/notify';
 function Forgot() {
+    const history = useNavigate();
+    const { setErrorCode } = useContext(NotifiContext);
     const onFinish = async (values) => {
         console.log('Received values of form: ', values);
         const res = await forgotPassword(values.username);
-        console.log("res");
+        if (res.statusCode === 220) {
+            setErrorCode('FORGOT_001');
+            history('/login');
+        }
+        else if (res.statusCode === 201)
+            setErrorCode('FORGOT_002');
+        else
+           console.log("error Forgot",res);
+
     };
 
     return (

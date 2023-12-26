@@ -88,6 +88,14 @@ const saveNote = async(hid,gid,nid) => {
     }
     return await axios.post('http://localhost:8083/note/save', body);
 }
+const unSveNote = async(hid,gid,nid) => {
+    const body={
+        hid:hid,
+        gid:gid,
+        nid:nid
+    }
+    return await axios.post('http://localhost:8083/note/save', body);
+}
 const getSaveNote = async(gid,nid) => {
     const body={
         gid:gid,
@@ -116,6 +124,7 @@ export {
     deleteNote,
     copyNote,
     saveNote,
+    unSveNote,
     getSaveNote,
     customShare
 

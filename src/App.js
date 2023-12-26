@@ -76,10 +76,10 @@ function App() {
      
       <Routes>
           <Route path="/" element={user ? <Home /> : <Login />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<Forgot />} />
+          <Route path="/home" element={user ? <Home /> :<Home />} />
+          <Route path="/login" element={user ? <Home /> :<Login />} />
+          <Route path="/register" element={user ? <Home /> :<Register />} />
+          <Route path="/forgot-password" element={user ? <Home /> :<Forgot />} />
           <Route path="/edit" element={<Edit />} />
           <Route path="/view" element={<View />} />
           <Route path="/view/:idshare" element={<View />} />

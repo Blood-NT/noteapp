@@ -1,12 +1,34 @@
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
 import { Link } from "react-router-dom";
 import { register } from "../../API/userAPI";
+import { NotifiContext } from "../notify/notify";
+import { useNavigate } from 'react-router-dom';
+
 function Register() {
+  const history = useNavigate();
+
+  const { setErrorCode } = useContext(NotifiContext);
   const onFinish = async (values) => {
-   const res = await register(values.username,  values.password,values.email);
+    const res = await register(values.username, values.password, values.email);
+    console.log("register", res);
+    if (res.statusCode === 210) {
+      setErrorCode("REGISTER_001");
+      // chuyển hướng về trang login
+      history("/login");
+    }
+    else if (res.statusCode === 211)
+      setErrorCode("REGISTER_002");
+    else if (res.statusCode === 212)
+      setErrorCode("REGISTER_003");
+    else if (res.statusCode === 213)
+      setErrorCode("REGISTER_004");
+    else
+      console.log("error Register", res);
+
+
   };
 
   return (

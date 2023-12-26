@@ -37,8 +37,16 @@ function Login() {
             setUser(datauser);
             setErrorCode("LOGIN_001");
         }
-        else
+        else if (res.statusCode === 201)
             setErrorCode("LOGIN_002");
+        else if (res.statusCode === 202)
+            setErrorCode("LOGIN_003");
+        else if (res.statusCode === 203)
+            setErrorCode("LOGIN_004");
+        else if (res.statusCode === 204)
+            setErrorCode("LOGIN_005");
+        else 
+        console.log("error Login",res);
     };
 
     return (
