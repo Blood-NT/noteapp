@@ -110,7 +110,7 @@ function Home() {
                 <Tabs
                     defaultActiveKey="1"
                     onChange={onChangeTab}
-                    items={[CheckCircleFilled, WarningOutlined, HeartFilled].map((Icon, i) => {
+                    items={[CheckCircleFilled, WarningOutlined].map((Icon, i) => {
                         const id = String(i + 1);
 
                         return {
@@ -120,14 +120,15 @@ function Home() {
                                     Mặc định
                                 </span>
                                     : (
-                                        id === "2" ? <span>
+                                        // id === "2" ?
+                                         <span>
                                             <Icon />
                                             Quan trọng
                                         </span>
-                                            : <span>
-                                                <Icon />
-                                                Yêu thích
-                                            </span>
+                                            // : <span>
+                                            //     <Icon />
+                                            //     Yêu thích
+                                            // </span>
                                     )
 
 
