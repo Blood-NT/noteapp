@@ -17,30 +17,25 @@ export default function Myform({ onTitleChange, ...props }) {
     // const ENDPOINT = "http://localhost:8083";
     // const [noteData, setNoteData] = useState();
     // const socket = socketIOClient(ENDPOINT);
-
     const{user}=useContext(UserContext);
+    const [lastValue, setLastValue] = useState("");
     // gửi api sau cập nhật note
     useEffect(() => {
-        // const logValue = async() => {
-        //     const res = await updateNote(props.nid, props.uid, value)
-        // };
-
-        // const interval = setInterval(logValue, 2000);
-
-        // return () => {
-        //     clearInterval(interval);
-        // };
-        const fecthData = async () => {
-            const res = await updateNote(props.nid, props.uid, value)
-            console.log("update nef", res);
+        const logValue = async() => {
+            if(value!=lastValue)
+           {
+            console.log("value", value);
+            console.log("lastvalue", lastValue);
+             const res = await updateNote(props.nid, props.uid, value)
+            setLastValue(value);
         }
-        // const updateNote = (nid,uid) => {
-        //     socket.emit('updateNote', {uid, nid, titleNote, value  });
-        // };
-        // updateNote(user.uid,props.nid);
-        fecthData();
+        };
+        const interval = setInterval(logValue, 1000);
 
-
+        return () => {
+            clearInterval(interval);
+        };
+        // logValue();
     }, [value]);
 
     // useEffect(() => {
@@ -48,7 +43,6 @@ export default function Myform({ onTitleChange, ...props }) {
     //         console.log('Kết nối đến server thành công');
     //     });
     //     socket.emit('joinNoteRoom', props.nid);
-
     //     return () => {
     //         socket.disconnect(); 
     //     };
@@ -78,6 +72,7 @@ export default function Myform({ onTitleChange, ...props }) {
 
     const onChange = (content) => {
         setValue(content);
+        console.log("change");
         //
     };
     const [save, setSave] = useState(false);
